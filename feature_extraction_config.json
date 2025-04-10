@@ -1,0 +1,17 @@
+{
+    "input": {
+      "report_path": "report.parquet",
+      "gen_lib_path": "gen_spec_lib.parquet",
+      "mzml_path": "/path/to/mzML/files/*.mzML"
+    },
+    "processing": {
+      "batch_size": 2000,
+      "threads": 4,
+      "rt_window": 50,
+      "mz_tol": 20
+    },
+    "output": {
+      "output_dir": "output_features"
+    }
+}
+  

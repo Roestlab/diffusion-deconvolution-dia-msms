@@ -186,3 +186,26 @@ def generate_train_data(
     click.echo(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Info: Generating data slices from - {input_file}")
     generate_data_slices(input_file, output_file, isolation_window_index, window_size, sliding_step, mz_ppm_tol, bin_mz, ms1_fixed_mz_size, ms2_fixed_mz_size, batch_size, batch_writing_size, num_chunks, threads)
     click.echo(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Info:  Saved data slices to - {output_file}")
+
+@cli.command()
+@click.argument("config-path", type=click.Path(exists=True), required=True)
+def extract_features(config_path):
+    """
+    Extract MS1 and MS2 features from DIA-NN output files.
+    
+    Uses a dedicated configuration file to specify input files,
+    processing parameters, and output options.
+    """
+    from dquartic.data_preprocessing.feature_extraction import run_feature_extraction
+    
+    click.echo(f"Info: Extracting features using config from {config_path}")
+    summary = run_feature_extraction(config_path)
+    
+    # Provide information for integration with training
+    click.echo("\nIntegration with diffusion-deconvolution-dia-msms-data:")
+    click.echo("Add the following to your dquartic_train_config.json:")
+    click.echo('{\n  "data": {\n'
+          f'    "ms1_data_path": "{summary["ms1_features_combined"]}",\n'
+          f'    "ms2_data_path": "{summary["ms2_features_combined"]}",\n'
+          '    "normalize": "minmax"\n'
+          '  }\n}')
